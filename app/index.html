@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html style="margin: 0; padding: 0;">
+    <head>
+
+    </head>
+    <body style="margin: 0; padding: 0;">
+        <video id="video0" style="width: 100vw; height: 100vh; z-index: 5; position: fixed; left: 0; top: 0; object-fit: fill;"  width="320" height="240">
+            <source src="./videos/AnimatieCoresi-start.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <video id="video1" style="width: 100vw; height: 100vh; z-index: 0; position: fixed; left: 0; top: 0; object-fit: fill;"  width="320" height="240">
+            <source src="./videos/AnimatieCoresi-hartie.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <video id="video2" style="width: 100vw; height: 100vh; z-index: 0; position: fixed; left: 0; top: 0; object-fit: fill;" width="320" height="240">
+            <source src="./videos/AnimatieCoresi-plastic.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <video id="video3" style="width: 100vw; height: 100vh; z-index: 0; position: fixed; left: 0; top: 0; object-fit: fill;" width="320" height="240">
+            <source src="./videos/AnimatieCoresi-doza.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <script>
+            const video0 = document.getElementById('video0');
+            const video1 = document.getElementById('video1');
+            const video2 = document.getElementById('video2');
+            const video3 = document.getElementById('video3');
+
+            video0.onclick = async (event) => {
+                window.innerWidth;
+                if (event.clientX < window.innerWidth / 3) {
+                    video1.style.zIndex = 10;
+                    await video1.play();
+                } else if (event.clientX >= window.innerWidth / 3 && event.clientX < window.innerWidth * 2 / 3) {
+                    video2.style.zIndex = 10;
+                    await video2.play();
+                } else {
+                    video3.style.zIndex = 10;
+                    await video3.play();
+                }
+            }
+
+            video1.onended = () => video1.style.zIndex = 0;
+            video2.onended = () => video2.style.zIndex = 0;
+            video3.onended = () => video3.style.zIndex = 0;
+        </script>
+    </body>
+</html>
