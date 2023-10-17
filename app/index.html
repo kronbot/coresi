@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html style="margin: 0; padding: 0;">
     <head>
-
+        <title>Coresi</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     </head>
     <body style="margin: 0; padding: 0;">
         <video id="video0" style="width: 100vw; height: 100vh; z-index: 5; position: fixed; left: 0; top: 0; object-fit: fill;"  width="320" height="240">
@@ -27,7 +28,6 @@
             const video3 = document.getElementById('video3');
 
             video0.onclick = async (event) => {
-                window.innerWidth;
                 if (event.clientX < window.innerWidth / 3) {
                     video1.style.zIndex = 10;
                     await video1.play();
@@ -40,9 +40,17 @@
                 }
             }
 
-            video1.onended = () => video1.style.zIndex = 0;
-            video2.onended = () => video2.style.zIndex = 0;
-            video3.onended = () => video3.style.zIndex = 0;
+            video0.onloadeddata = () => video0.play();
+
+            video1.onended = () => {video1.style.zIndex = 0; video0.play()};
+            video2.onended = () => {video2.style.zIndex = 0; video0.play()};
+            video3.onended = () => {video3.style.zIndex = 0; video0.play()};
+
+            document.addEventListener("contextmenu", (event) => {
+                event.preventDefault();
+            });
         </script>
     </body>
 </html>
+
+<!--chrome://flags/#touch-events (for disable pinch)-->
