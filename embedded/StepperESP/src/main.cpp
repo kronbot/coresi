@@ -30,9 +30,10 @@ void loop()
 
   controller->runToPosition("ACTUATOR", "FIRST");
 
-  delay(5000);
+  delay(10000);
 
   controller->runToPosition("ACTUATOR", "SECOND");
 
-  delay(5000);
+  delay(10000);
+  // controller->stop();
 }

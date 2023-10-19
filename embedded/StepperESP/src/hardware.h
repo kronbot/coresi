@@ -2,31 +2,22 @@
 #define _HARDWARE_H_
 
 #include <AccelStepper.h>
-#include "pidController.h"
 
 namespace Hardware
 {
     namespace Config
     {
-        const int DefaultStepperAcceleration = 500;
-        const int DefaultStepperSpeed = 500;
-        const int DefaultStepperMaxSpeed = 1000;
+        const int DefaultStepperAcceleration = 2000;
+        const int DefaultStepperSpeed = 2000;
+        const int DefaultStepperMaxSpeed = 4000;
 
-        const int StepsPerRevolution = 200;
-        const double WheelDiameter = 0.5;
-
-        namespace PID
-        {
-            const double Kp = 0.1;
-            const double Ki = 0.1;
-            const double Kd = 0.1;
-        }
+        const int StepsPerRevolution = 800;
+        const double WheelDiameter = 280; // mm
     }
 
     class Stepper
     {
         AccelStepper *stepper;
-        PID::PIDController *pidController;
 
         int pulsePin, directionPin;
         int acceleration = Config::DefaultStepperAcceleration;
@@ -36,9 +27,9 @@ namespace Hardware
         int stepsPerRevolution = Config::StepsPerRevolution;
         double wheelDiameter = Config::WheelDiameter;
 
-        int position = 0;
+        int position;
 
-        bool telemetry = false;
+        bool telemetry;
 
     public:
         Stepper(int pulsePin, int directionPin)
@@ -46,7 +37,6 @@ namespace Hardware
             this->pulsePin = pulsePin;
             this->directionPin = directionPin;
 
-            pidController = new PID::PIDController(Config::PID::Kp, Config::PID::Ki, Config::PID::Kd);
             stepper = new AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
 
             stepper->setMaxSpeed(maxSpeed);
@@ -60,7 +50,6 @@ namespace Hardware
             this->pulsePin = pulsePin;
             this->directionPin = directionPin;
 
-            pidController = new PID::PIDController(Config::PID::Kp, Config::PID::Ki, Config::PID::Kd);
             stepper = new AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
 
             stepper->setMaxSpeed(maxSpeed);
@@ -79,21 +68,6 @@ namespace Hardware
                 Serial.println("Stepper force stopped");
         }
 
-        void run()
-        {
-            speed = pidController->compute(distance());
-
-            if (telemetry)
-            {
-                Serial.print("Stepper PID speed: ");
-                Serial.println(speed);
-            }
-
-            // stepper->setSpeed(speed);
-
-            stepper->run();
-        }
-
         int distance()
         {
             if (telemetry)
@@ -104,7 +78,7 @@ namespace Hardware
             return stepper->distanceToGo();
         }
 
-        void setPosition(int position)
+        void moveTo(int position)
         {
             if (telemetry)
             {
@@ -112,7 +86,60 @@ namespace Hardware
                 Serial.println(position);
             }
             stepper->moveTo(position);
+            this->position = position;
+        }
+
+        void run()
+        {
             stepper->runToPosition();
+        }
+
+        int getPosition()
+        {
+            return position;
+        }
+
+        void reset()
+        {
+            stepper->stop();
+            stepper->setCurrentPosition(0);
+            position = 0;
+        }
+    };
+
+    class LimitSwitch
+    {
+        int pin;
+        bool telemetry;
+
+    public:
+        LimitSwitch(int pin)
+        {
+            this->pin = pin;
+            pinMode(pin, INPUT);
+        }
+
+        LimitSwitch(int pin, bool telemetry)
+        {
+            this->pin = pin;
+            pinMode(pin, INPUT);
+
+            this->telemetry = telemetry;
+        }
+
+        bool isPressed()
+        {
+            bool pressed = digitalRead(pin) == LOW;
+
+            if (telemetry)
+            {
+                Serial.print("Limit switch ");
+                Serial.print(pin);
+                Serial.print(" is pressed: ");
+                Serial.println(pressed);
+            }
+
+            return pressed;
         }
     };
 }
