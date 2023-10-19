@@ -42,8 +42,8 @@ namespace Control
         {
             const int DoorOpenPositionSteps = 1000;
 
-            const int FirstBoxPositionSteps = 100000;
-            const int SecondBoxPositionSteps = 200000;
+            const int FirstBoxPositionSteps = 10000;
+            const int SecondBoxPositionSteps = 20000;
             const int ThirdBoxPositionSteps = 30000;
             const int RestPositionSteps = 0;
         }
@@ -62,10 +62,10 @@ namespace Control
                 Config::Pins::Stepper::Actuator2PulusePin, Config::Pins::Stepper::Actuator2DirectionPin,
                 Config::Pins::LimitSwitch::ActuatorPin);
 
-            driverBox = new Drive::Driver(
-                Config::Pins::Stepper::Box1PulusePin, Config::Pins::Stepper::Box1DirectionPin,
-                Config::Pins::Stepper::Box2PulusePin, Config::Pins::Stepper::Box2DirectionPin,
-                Config::Pins::LimitSwitch::BoxPin);
+            // driverBox = new Drive::Driver(
+            //     Config::Pins::Stepper::Box1PulusePin, Config::Pins::Stepper::Box1DirectionPin,
+            //     Config::Pins::Stepper::Box2PulusePin, Config::Pins::Stepper::Box2DirectionPin,
+            //     Config::Pins::LimitSwitch::BoxPin);
 
             doorStepper = new Hardware::Stepper(
                 Config::Pins::Stepper::DoorPulusePin, Config::Pins::Stepper::DoorDirectionPin);

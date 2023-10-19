@@ -2,9 +2,9 @@
 #define _DRIVER_H_
 
 #include "hardware.h"
+#include <esp_task_wdt.h>
 #include <thread>
 #include <mutex>
-#include <condition_variable>
 
 namespace Drive
 {
@@ -13,61 +13,43 @@ namespace Drive
         Hardware::Stepper *stepper1, *stepper2;
         Hardware::LimitSwitch *limitSwitch;
 
-        std::mutex mutex;
-
         std::thread stepper1Thread;
-        std::condition_variable stepper1Condition;
-        bool stepper1Running = true;
-
         std::thread stepper2Thread;
-        std::condition_variable stepper2Condition;
-        bool stepper2Running = true;
-
         std::thread limitSwitchThread;
-        bool limitSwitchRunning = true;
 
-        int stepper1PositionToGo;
-        int stepper2PositionToGo;
+        bool reseted = false;
 
         void stepper1Run()
         {
-            while (stepper1Running)
+            esp_task_wdt_init(60, false);
+            while (true)
             {
-                if (stepper1PositionToGo != 0)
-                {
-                    stepper1->run();
-                    stepper1PositionToGo = 0;
-                }
-
-                delay(100);
+                stepper1->run();
+                delay(500);
             }
         }
 
         void stepper2Run()
         {
-            while (stepper2Running)
+            esp_task_wdt_init(60, false);
+            while (true)
             {
-                if (stepper2PositionToGo != 0)
-                {
-                    stepper2->run();
-                    stepper2PositionToGo = 0;
-                }
-
-                delay(100);
+                stepper2->run();
+                delay(500);
             }
         }
 
-        // void limitSwitchRun()
-        // {
-        //     // while (limitSwitchRunning)
-        //     // {
-        //     //     // if (limitSwitch->isPressed())
-        //     //     // {
-        //     //     //     reset();
-        //     //     // }
-        //     //     delay(500);
-        //     // }
-        // }
+        void limitSwitchRun()
+        {
+            esp_task_wdt_init(60, false);
+            while (true)
+            {
+                if (limitSwitch->isPressed())
+                    reset();
+
+                delay(50);
+            }
+        }
 
     public:
         Driver(int pulsePin1, int directionPin1, int pulsePin2, int directionPin2, int limitSwitchPin)
@@ -78,9 +60,12 @@ namespace Drive
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
             stepper2Thread = std::thread(&Driver::stepper2Run, this);
-            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
+            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            // moveTo(-100000);
+            moveTo(-100000);
+
+            while (!reseted)
+                delay(50);
         }
 
         Driver(int pulsePin1, int directionPin1, int pulsePin2, int directionPin2, int limitSwitchPin, bool telemetry)
@@ -91,26 +76,18 @@ namespace Drive
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
             stepper2Thread = std::thread(&Driver::stepper2Run, this);
+            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            stepper1Thread.detach();
-            stepper2Thread.detach();
+            moveTo(-100000);
 
-            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
-
-            // moveTo(-100000);
+            while (!reseted)
+                delay(50);
         }
 
         ~Driver()
         {
-            mutex.lock();
-            stepper1Running = false;
-            stepper2Running = false;
-            limitSwitchRunning = false;
-            mutex.unlock();
-
             stepper1Thread.join();
             stepper2Thread.join();
-            limitSwitchThread.join();
 
             delete stepper1;
             delete stepper2;
@@ -126,19 +103,13 @@ namespace Drive
         {
             stepper1->moveTo(position);
             stepper2->moveTo(position);
-
-            stepper1PositionToGo = position;
-            stepper2PositionToGo = position;
         }
 
         void reset()
         {
-            delay(100);
-
             stepper1->reset();
             stepper1->reset();
-
-            delay(100);
+            reseted = true;
         }
     };
 }

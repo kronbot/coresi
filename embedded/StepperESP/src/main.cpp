@@ -12,8 +12,10 @@ void setup()
   Serial.begin(115200);
   uartSerial.begin(115200, SERIAL_8N1, 16, 17);
 
-  controller = new Control::Controller(true);
+  controller = new Control::Controller(false);
   uart = new COM::UART(uartSerial);
+
+  delay(2000);
 }
 
 void loop()
