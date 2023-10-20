@@ -108,7 +108,7 @@ namespace Drive
         void reset()
         {
             stepper1->reset();
-            stepper1->reset();
+            stepper2->reset();
             reseted = true;
         }
     };

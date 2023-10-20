@@ -12,7 +12,7 @@ void setup()
   Serial.begin(115200);
   uartSerial.begin(115200, SERIAL_8N1, 16, 17);
 
-  controller = new Control::Controller(false);
+  controller = new Control::Controller(true);
   uart = new COM::UART(uartSerial);
 
   delay(2000);
