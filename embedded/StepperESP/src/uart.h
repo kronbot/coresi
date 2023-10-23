@@ -13,12 +13,8 @@ namespace COM
         std::pair<String, String> data;
 
     public:
-        UART(
-            HardwareSerial &serial) : serial(serial)
-        {
-            serial.begin(115200);
-        }
-
+        UART(HardwareSerial &serial) : serial(serial) {}
+        
         void update()
         {
             String buffer;

@@ -17,7 +17,7 @@ namespace Hardware
 
     class Stepper
     {
-        AccelStepper *stepper;
+        AccelStepper stepper;
 
         int pulsePin, directionPin;
         int acceleration = Config::DefaultStepperAcceleration;
@@ -32,17 +32,19 @@ namespace Hardware
         bool telemetry;
 
     public:
+        Stepper() = default;
+
         Stepper(int pulsePin, int directionPin)
         {
             this->pulsePin = pulsePin;
             this->directionPin = directionPin;
 
-            stepper = new AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
+            stepper = AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
 
-            stepper->setMaxSpeed(maxSpeed);
-            stepper->setAcceleration(acceleration);
-            stepper->setSpeed(speed);
-            stepper->setCurrentPosition(0);
+            stepper.setMaxSpeed(maxSpeed);
+            stepper.setAcceleration(acceleration);
+            stepper.setSpeed(speed);
+            stepper.setCurrentPosition(0);
         }
 
         Stepper(int pulsePin, int directionPin, bool telemetry)
@@ -50,19 +52,19 @@ namespace Hardware
             this->pulsePin = pulsePin;
             this->directionPin = directionPin;
 
-            stepper = new AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
+            stepper = AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
 
-            stepper->setMaxSpeed(maxSpeed);
-            stepper->setAcceleration(acceleration);
-            stepper->setSpeed(speed);
-            stepper->setCurrentPosition(0);
+            stepper.setMaxSpeed(maxSpeed);
+            stepper.setAcceleration(acceleration);
+            stepper.setSpeed(speed);
+            stepper.setCurrentPosition(0);
 
             this->telemetry = telemetry;
         }
 
         void forceStop()
         {
-            stepper->stop();
+            stepper.stop();
 
             if (telemetry)
                 Serial.println("Stepper force stopped");
@@ -73,9 +75,9 @@ namespace Hardware
             if (telemetry)
             {
                 Serial.print("Stepper distance to go: ");
-                Serial.println(stepper->distanceToGo());
+                Serial.println(stepper.distanceToGo());
             }
-            return stepper->distanceToGo();
+            return stepper.distanceToGo();
         }
 
         void moveTo(int position)
@@ -85,13 +87,13 @@ namespace Hardware
                 Serial.print("Stepper new position: ");
                 Serial.println(position);
             }
-            stepper->moveTo(position);
+            stepper.moveTo(position);
             this->position = position;
         }
 
         void run()
         {
-            stepper->runToPosition();
+            stepper.runToPosition();
         }
 
         int getPosition()
@@ -101,9 +103,24 @@ namespace Hardware
 
         void reset()
         {
-            stepper->stop();
-            stepper->setCurrentPosition(0);
+            stepper.stop();
+            stepper.setCurrentPosition(0);
             position = 0;
+        }
+
+        Stepper &operator=(const Stepper &other)
+        {
+            this->pulsePin = other.pulsePin;
+            this->directionPin = other.directionPin;
+            this->acceleration = other.acceleration;
+            this->speed = other.speed;
+            this->maxSpeed = other.maxSpeed;
+            this->stepsPerRevolution = other.stepsPerRevolution;
+            this->wheelDiameter = other.wheelDiameter;
+            this->position = other.position;
+            this->telemetry = other.telemetry;
+
+            return *this;
         }
     };
 
@@ -113,6 +130,8 @@ namespace Hardware
         bool telemetry;
 
     public:
+        LimitSwitch() = default;
+
         LimitSwitch(int pin)
         {
             this->pin = pin;
@@ -140,6 +159,14 @@ namespace Hardware
             }
 
             return pressed;
+        }
+
+        LimitSwitch &operator=(const LimitSwitch &other)
+        {
+            this->pin = other.pin;
+            this->telemetry = other.telemetry;
+
+            return *this;
         }
     };
 }
