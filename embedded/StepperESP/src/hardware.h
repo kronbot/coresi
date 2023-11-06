@@ -7,12 +7,12 @@ namespace Hardware
 {
     namespace Config
     {
-        const int DefaultStepperAcceleration = 2000;
-        const int DefaultStepperSpeed = 2000;
-        const int DefaultStepperMaxSpeed = 4000;
+        const int DEFAULT_STEPPER_ACCELERATION = 2000;
+        const int DEFAULT_STEPPER_SPEED = 2000;
+        const int DEFAULT_STEPPER_MAX_SPEED = 4000;
 
-        const int StepsPerRevolution = 800;
-        const double WheelDiameter = 280; // mm
+        const int STEPS_PER_REVOLUTION = 800;
+        const double WHEEL_DIAMETER = 280; // mm
     }
 
     class Stepper
@@ -20,12 +20,12 @@ namespace Hardware
         AccelStepper stepper;
 
         int pulsePin, directionPin;
-        int acceleration = Config::DefaultStepperAcceleration;
-        int speed = Config::DefaultStepperSpeed;
-        int maxSpeed = Config::DefaultStepperMaxSpeed;
+        int acceleration = Config::DEFAULT_STEPPER_ACCELERATION;
+        int speed = Config::DEFAULT_STEPPER_SPEED;
+        int maxSpeed = Config::DEFAULT_STEPPER_MAX_SPEED;
 
-        int stepsPerRevolution = Config::StepsPerRevolution;
-        double wheelDiameter = Config::WheelDiameter;
+        int stepsPerRevolution = Config::STEPS_PER_REVOLUTION;
+        double wheelDiameter = Config::WHEEL_DIAMETER;
 
         int position;
 
@@ -116,7 +116,7 @@ namespace Hardware
             this->speed = other.speed;
             this->maxSpeed = other.maxSpeed;
             this->stepsPerRevolution = other.stepsPerRevolution;
-            this->wheelDiameter = other.wheelDiameter;
+            this->WHEEL_DIAMETER = other.WHEEL_DIAMETER;
             this->position = other.position;
             this->telemetry = other.telemetry;
 

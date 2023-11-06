@@ -2,7 +2,6 @@
 #define _CONTROLLER_H_
 
 #include "driver.h"
-#include "hardware.h"
 
 namespace Control
 {
@@ -12,22 +11,22 @@ namespace Control
         {
             namespace Stepper
             {
-                const int Actuator1PulusePin = 32;
-                const int Actuator1DirectionPin = 33;
+                const int ACTUATOR_1_PULSE_PIN = 32;
+                const int ACTUATOR_1_DIRECTION_PIN = 33;
 
-                const int Actuator2PulusePin = 25;
-                const int Actuator2DirectionPin = 33;
+                const int ACTUATOR_2_PULSE_PIN = 25;
+                const int ACTUATOR_2_DIRECTION_PIN = 33;
 
-                const int Box1PulusePin = 26;
-                const int Box1DirectionPin = 27;
+                const int BOX_1_PULSE_PIN = 26;
+                const int BOX_1_DIRECTION_PIN = 27;
 
-                const int Box2PulusePin = 14;
-                const int Box2DirectionPin = 27;
+                const int BOX_2_PULSE_PIN = 14;
+                const int BOX_2_DIRECTION_PIN = 27;
 
-                const int DoorPulusePin = 12;
-                const int DoorDirectionPin = 13;
+                const int DOOR_PULSE_PIN = 12;
+                const int DOOR_DIRECTION_PIN = 13;
 
-                const int EnablePin = 2;
+                const int ENABLE_PIN = 2;
             }
 
             namespace LimitSwitch
@@ -57,39 +56,39 @@ namespace Control
         Controller()
         {
             actuatorsDriver = Drive::Driver(
-                Config::Pins::Stepper::Actuator1PulusePin, Config::Pins::Stepper::Actuator1DirectionPin,
-                Config::Pins::Stepper::Actuator2PulusePin, Config::Pins::Stepper::Actuator2DirectionPin,
+                Config::Pins::Stepper::ACTUATOR_1_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_1_DIRECTION_PIN,
+                Config::Pins::Stepper::ACTUATOR_2_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::ActuatorPin);
 
             boxDriver = Drive::Driver(
-                Config::Pins::Stepper::Box1PulusePin, Config::Pins::Stepper::Box1DirectionPin,
-                Config::Pins::Stepper::Box2PulusePin, Config::Pins::Stepper::Box2DirectionPin,
+                Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
+                Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::BoxPin);
 
             doorDriver = Drive::Driver(
-                Config::Pins::Stepper::DoorPulusePin, Config::Pins::Stepper::DoorDirectionPin,
+                Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::DoorPin);
 
-            pinMode(Config::Pins::Stepper::EnablePin, OUTPUT);
+            pinMode(Config::Pins::Stepper::ENABLE_PIN, OUTPUT);
         }
 
         Controller(bool telemetry)
         {
             actuatorsDriver = Drive::Driver(
-                Config::Pins::Stepper::Actuator1PulusePin, Config::Pins::Stepper::Actuator1DirectionPin,
-                Config::Pins::Stepper::Actuator2PulusePin, Config::Pins::Stepper::Actuator2DirectionPin,
+                Config::Pins::Stepper::ACTUATOR_1_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_1_DIRECTION_PIN,
+                Config::Pins::Stepper::ACTUATOR_2_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::ActuatorPin, telemetry);
 
             boxDriver = Drive::Driver(
-                Config::Pins::Stepper::Box1PulusePin, Config::Pins::Stepper::Box1DirectionPin,
-                Config::Pins::Stepper::Box2PulusePin, Config::Pins::Stepper::Box2DirectionPin,
+                Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
+                Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::BoxPin, telemetry);
 
             doorDriver = Drive::Driver(
-                Config::Pins::Stepper::DoorPulusePin, Config::Pins::Stepper::DoorDirectionPin,
+                Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::DoorPin, telemetry);
 
-            pinMode(Config::Pins::Stepper::EnablePin, OUTPUT);
+            pinMode(Config::Pins::Stepper::ENABLE_PIN, OUTPUT);
         }
 
         void runToPosition(String system, String position)
@@ -125,7 +124,7 @@ namespace Control
 
         void stop()
         {
-            digitalWrite(Config::Pins::Stepper::EnablePin, HIGH);
+            digitalWrite(Config::Pins::Stepper::ENABLE_PIN, HIGH);
             actuatorsDriver.forceStop();
             boxDriver.forceStop();
             doorDriver.forceStop();

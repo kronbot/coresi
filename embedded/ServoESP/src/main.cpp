@@ -20,9 +20,10 @@ void loop()
   if (uart.isReadyToReceive())
   {
     std::pair<String, String> data = uart.recieve();
-    controller.runToPosition(data.first, data.second);
+    controller.run(data.first, data.second);
 
     uart.send("RECIEVED");
+    uart.send("DISTANCE " + COM::doubleToString(controller.getDistance()));
   }
   uart.update();
   delay(100);
