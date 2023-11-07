@@ -136,7 +136,7 @@ namespace Drive
         {
             stepper1.moveTo(position);
             if (!singleStepper)
-                stepper2.moveTo(position);
+                stepper2.moveTo(-position);
         }
 
         void reset()

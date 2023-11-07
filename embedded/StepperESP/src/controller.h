@@ -15,16 +15,16 @@ namespace Control
                 const int ACTUATOR_1_DIRECTION_PIN = 33;
 
                 const int ACTUATOR_2_PULSE_PIN = 25;
-                const int ACTUATOR_2_DIRECTION_PIN = 33;
+                const int ACTUATOR_2_DIRECTION_PIN = 26;
 
-                const int BOX_1_PULSE_PIN = 26;
-                const int BOX_1_DIRECTION_PIN = 27;
+                const int BOX_1_PULSE_PIN = 27;
+                const int BOX_1_DIRECTION_PIN = 14;
 
-                const int BOX_2_PULSE_PIN = 14;
-                const int BOX_2_DIRECTION_PIN = 27;
+                const int BOX_2_PULSE_PIN = 12;
+                const int BOX_2_DIRECTION_PIN = 13;
 
-                const int DOOR_PULSE_PIN = 12;
-                const int DOOR_DIRECTION_PIN = 13;
+                const int DOOR_PULSE_PIN = 5;
+                const int DOOR_DIRECTION_PIN = 4;
 
                 const int ENABLE_PIN = 2;
             }
