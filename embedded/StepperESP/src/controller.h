@@ -79,14 +79,14 @@ namespace Control
                 Config::Pins::Stepper::ACTUATOR_2_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::ActuatorPin, telemetry);
 
-            boxDriver = Drive::Driver(
-                Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
-                Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
-                Config::Pins::LimitSwitch::BoxPin, telemetry);
+            // boxDriver = Drive::Driver(
+            //     Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
+            //     Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
+            //     Config::Pins::LimitSwitch::BoxPin, telemetry);
 
-            doorDriver = Drive::Driver(
-                Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
-                Config::Pins::LimitSwitch::DoorPin, telemetry);
+            // doorDriver = Drive::Driver(
+            //     Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
+            //     Config::Pins::LimitSwitch::DoorPin, telemetry);
 
             pinMode(Config::Pins::Stepper::ENABLE_PIN, OUTPUT);
         }
@@ -128,6 +128,15 @@ namespace Control
             actuatorsDriver.forceStop();
             boxDriver.forceStop();
             doorDriver.forceStop();
+        }
+
+        Controller &operator=(const Controller &other)
+        {
+            actuatorsDriver = other.actuatorsDriver;
+            boxDriver = other.boxDriver;
+            doorDriver = other.doorDriver;
+
+            return *this;
         }
     };
 }

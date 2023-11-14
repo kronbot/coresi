@@ -116,7 +116,7 @@ namespace Hardware
             this->speed = other.speed;
             this->maxSpeed = other.maxSpeed;
             this->stepsPerRevolution = other.stepsPerRevolution;
-            this->WHEEL_DIAMETER = other.WHEEL_DIAMETER;
+            this->wheelDiameter = other.wheelDiameter;
             this->position = other.position;
             this->telemetry = other.telemetry;
 

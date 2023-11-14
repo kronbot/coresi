@@ -22,7 +22,7 @@ namespace Drive
 
         void stepper1Run()
         {
-            esp_task_wdt_init(60, false);
+            // esp_task_wdt_init(60, false);
             while (true)
             {
                 stepper1.run();
@@ -32,7 +32,7 @@ namespace Drive
 
         void stepper2Run()
         {
-            esp_task_wdt_init(60, false);
+            // esp_task_wdt_init(60, false);
             while (true)
             {
                 stepper2.run();
@@ -42,7 +42,7 @@ namespace Drive
 
         void limitSwitchRun()
         {
-            esp_task_wdt_init(60, false);
+            // esp_task_wdt_init(60, false);
             while (true)
             {
                 if (limitSwitch.isPressed())
@@ -73,18 +73,20 @@ namespace Drive
 
         Driver(int pulsePin1, int directionPin1, int pulsePin2, int directionPin2, int limitSwitchPin, bool telemetry)
         {
-            this->stepper1 = Hardware::Stepper(pulsePin1, directionPin1, telemetry);
-            this->stepper2 = Hardware::Stepper(pulsePin2, directionPin2, telemetry);
-            this->limitSwitch = Hardware::LimitSwitch(limitSwitchPin, telemetry);
+            // this->stepper1 = Hardware::Stepper(pulsePin1, directionPin1, telemetry);
+            // this->stepper2 = Hardware::Stepper(pulsePin2, directionPin2, telemetry);
+            // this->limitSwitch = Hardware::LimitSwitch(limitSwitchPin, telemetry);
 
-            stepper1Thread = std::thread(&Driver::stepper1Run, this);
-            stepper2Thread = std::thread(&Driver::stepper2Run, this);
-            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
+            // Serial.println("Driver created");
 
-            moveTo(-100000);
+            // stepper1Thread = std::thread(&Driver::stepper1Run, this);
+            // stepper2Thread = std::thread(&Driver::stepper2Run, this);
+            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            while (!reseted)
-                delay(50);
+            // moveTo(-100000);
+
+            // while (!reseted)
+            //     delay(50);
         }
 
         Driver(int pulsePin1, int directionPin1, int limitSwitchPin)
