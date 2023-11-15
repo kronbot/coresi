@@ -1,28 +1,18 @@
 {
-  "name": "electron",
+  "name": "coresi",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "start": "electron ./src/main.js"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "electron": "^27.0.0",
-    "electron-builder": "^24.6.4"
-  },
-  "build": {
-    "appId": "com.yourapp.id",
-    "productName": "YourAppName",
-    "directories": {
-      "output": "dist"
-    },
-    "win": {
-      "target": "portable"
-    }
+  "dependencies": {
+    "raspi": "^6.0.1",
+    "raspi-serial": "^6.0.0",
+    "serialport": "^12.0.0"
   }
 }

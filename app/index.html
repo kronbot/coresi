@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     </head>
     <body style="margin: 0; padding: 0;">
+        <img id="ad" alt="ad" style="width: 100vw; height: 50vw; position: fixed; left: 0; top: 0; object-fit: contain">
         <img id="video0" style="width: 100vw; height: 50vh; z-index: 5; position: fixed; left: 0; bottom: 0; object-fit:cover"  width="320" height="240" src="./videos/start.jpg">
         </img>
         <video id="video1" style="width: 100vw; height: 50vh; z-index: 0; position: fixed; left: 0; bottom: 0; object-fit: cover"  width="320" height="240">
@@ -20,35 +21,64 @@
             Your browser does not support the video tag.
         </video>
         <script>
-            const video0 = document.getElementById('video0');
-            const video1 = document.getElementById('video1');
-            const video2 = document.getElementById('video2');
-            const video3 = document.getElementById('video3');
-
             video0.onclick = async (event) => {
                 if (event.clientX < window.innerWidth / 3) {
+                    window.api.send('sendCommand', 'hartie');
+                    video1.currentTime = 0.001;
                     video1.style.zIndex = 10;
                     await video1.play();
                 } else if (event.clientX >= window.innerWidth / 3 && event.clientX < window.innerWidth * 2 / 3) {
+                    window.api.send('sendCommand', 'plastic');
+                    video2.currentTime = 0.001;
                     video2.style.zIndex = 10;
                     await video2.play();
                 } else {
+                    window.api.send('sendCommand', 'doza');
+                    video3.currentTime = 0.001;
                     video3.style.zIndex = 10;
                     await video3.play();
                 }
             }
 
-            video0.onloadeddata = () => video0.play();
-
-            video1.onended = () => {video1.style.zIndex = 0; video0.play()};
-            video2.onended = () => {video2.style.zIndex = 0; video0.play()};
-            video3.onended = () => {video3.style.zIndex = 0; video0.play()};
+            video1.onended = () => {
+                setTimeout(() => {
+                    video1.style.zIndex = 0;
+                    video1.currentTime = 0.001;
+                }, 5000);
+            }
+            
+            video2.onended = () => {
+                setTimeout(() => {
+                    video2.style.zIndex = 0;
+                    video2.currentTime = 0.001;
+                }, 5000);
+            }
+            
+            video3.onended = () => {
+                setTimeout(() => {
+                    video3.style.zIndex = 0;
+                    video3.currentTime = 0.001;
+                }, 5000);
+            }
 
             document.addEventListener("contextmenu", (event) => {
                 event.preventDefault();
             });
+            
+            function getImages() {
+                window.api.send('getImagePath');
+            }
+            
+            window.api.receive('filePath', (file) => {
+               ad.src = `./ads/${file}`;
+            });
+            
+            getImages();
+            
+            setInterval(() => {
+                    getImages();
+            }, 30000);
+            
         </script>
     </body>
 </html>
-
-<!--chrome://flags/#touch-events (for disable pinch)-->

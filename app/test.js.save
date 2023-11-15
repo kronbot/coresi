@@ -1,0 +1,12 @@
+const raspi = require('raspi');
+const Serial = require('raspi-serial').Serial;
+
+raspi.init(() => {
+  raspi.init(() => {
+
+  const ports = Serial.list();
+
+  console.log('Available ports:', ports);
+
+	});
+});
