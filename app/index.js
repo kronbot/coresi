@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const SerialPort = require('serialport');
+//const SerialPort = require('serialport');
 //const raspi = require('raspi');
 //const Serial = require('raspi-serial').Serial;
 
@@ -32,7 +32,7 @@ function createWindow() {
 
   ipcMain.on('sendCommand', (event, data) => {
     console.log(data);
-    serial.write(data);
+  //  serial.write(data);
   });
 
   win.webContents.openDevTools();

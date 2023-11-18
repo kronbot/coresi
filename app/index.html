@@ -21,19 +21,56 @@
             Your browser does not support the video tag.
         </video>
         <script>
+            const sendServoCommand = (param) => {
+                fetch("http://localhost:8000/servo" + param, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers as needed
+                      },
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                        console.log('Data received:', data);
+                      })
+                      .catch(error => {
+                        console.error('Error during fetch:', error);
+                      })
+            }
+            
+            const sendStepperCommand = (param) => {
+                fetch("http://localhost:8000/stepper" + param, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers as needed
+                      },
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                        console.log('Data received:', data);
+                      })
+                      .catch(error => {
+                        console.error('Error during fetch:', error);
+                      })
+            }
+            
             video0.onclick = async (event) => {
                 if (event.clientX < window.innerWidth / 3) {
-                    window.api.send('sendCommand', 'hartie');
+                    sendServoCommand("ACTUATOR FULL");
+                    sendStepperCommand("ACTUATOR FIRST");
                     video1.currentTime = 0.001;
                     video1.style.zIndex = 10;
                     await video1.play();
                 } else if (event.clientX >= window.innerWidth / 3 && event.clientX < window.innerWidth * 2 / 3) {
-                    window.api.send('sendCommand', 'plastic');
+                    sendServoCommand("ACTUATOR FULL");
+                    sendStepperCommand("ACTUATOR SECOND");
                     video2.currentTime = 0.001;
                     video2.style.zIndex = 10;
                     await video2.play();
                 } else {
-                    window.api.send('sendCommand', 'doza');
+                    sendServoCommand("ACTUATOR FULL");
+                    sendStepperCommand("ACTUATOR THIRD");
                     video3.currentTime = 0.001;
                     video3.style.zIndex = 10;
                     await video3.play();
