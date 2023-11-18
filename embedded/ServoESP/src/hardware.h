@@ -20,9 +20,7 @@ namespace Hardware
         bool telemetry;
 
     public:
-        ESPServo() = default;
-
-        ESPServo(int pin, bool telemetry)
+        void init(int pin, bool telemetry)
         {
             servo.attach(pin);
             this->telemetry = telemetry;
@@ -30,21 +28,7 @@ namespace Hardware
 
         void write(int value)
         {
-            if (telemetry)
-            {
-                Serial.print("Servo value: ");
-                Serial.println(value);
-            }
-
             servo.write(value);
-        }
-
-        ESPServo &operator=(const ESPServo &other)
-        {
-            this->servo = other.servo;
-            this->telemetry = other.telemetry;
-
-            return *this;
         }
     };
 
@@ -56,9 +40,7 @@ namespace Hardware
         bool telemetry;
 
     public:
-        UltraSonic() = default;
-
-        UltraSonic(int trigPin, int echoPin, bool telemetry)
+        void init(int trigPin, int echoPin, bool telemetry)
         {
             this->trigPin = trigPin;
             this->echoPin = echoPin;
@@ -97,15 +79,6 @@ namespace Hardware
         {
             return distance;
         }
-
-        UltraSonic &operator=(const UltraSonic &other)
-        {
-            this->trigPin = other.trigPin;
-            this->echoPin = other.echoPin;
-            this->telemetry = other.telemetry;
-
-            return *this;
-        }
     };
 
     class DCMotor
@@ -115,9 +88,7 @@ namespace Hardware
         bool telemetry;
 
     public:
-        DCMotor() = default;
-
-        DCMotor(int pin1, int pin2, int enablePin, bool telemetry)
+        void init(int pin1, int pin2, int enablePin, bool telemetry)
         {
             this->pin1 = pin1;
             this->pin2 = pin2;
@@ -158,17 +129,6 @@ namespace Hardware
                 digitalWrite(pin2, HIGH);
             }
         }
-
-        DCMotor &operator=(const DCMotor &other)
-        {
-            this->pin1 = other.pin1;
-            this->pin2 = other.pin2;
-            this->enablePin = other.enablePin;
-            this->speed = other.speed;
-            this->telemetry = other.telemetry;
-
-            return *this;
-        }
     };
 
     class LedStrip
@@ -177,9 +137,7 @@ namespace Hardware
         bool telemetry;
 
     public:
-        LedStrip() = default;
-
-        LedStrip(int redPin, int greenPin, int bluePin, bool telemetry)
+        void init(int redPin, int greenPin, int bluePin, bool telemetry)
         {
             this->redPin = redPin;
             this->greenPin = greenPin;
@@ -196,16 +154,6 @@ namespace Hardware
             analogWrite(redPin, red);
             analogWrite(greenPin, green);
             analogWrite(bluePin, blue);
-        }
-
-        LedStrip &operator=(const LedStrip &other)
-        {
-            this->redPin = other.redPin;
-            this->greenPin = other.greenPin;
-            this->bluePin = other.bluePin;
-            this->telemetry = other.telemetry;
-
-            return *this;
         }
     };
 }

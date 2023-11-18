@@ -32,22 +32,7 @@ namespace Hardware
         bool telemetry;
 
     public:
-        Stepper() = default;
-
-        Stepper(int pulsePin, int directionPin)
-        {
-            this->pulsePin = pulsePin;
-            this->directionPin = directionPin;
-
-            stepper = AccelStepper(AccelStepper::DRIVER, pulsePin, directionPin);
-
-            stepper.setMaxSpeed(maxSpeed);
-            stepper.setAcceleration(acceleration);
-            stepper.setSpeed(speed);
-            stepper.setCurrentPosition(0);
-        }
-
-        Stepper(int pulsePin, int directionPin, bool telemetry)
+        void init(int pulsePin, int directionPin, bool telemetry)
         {
             this->pulsePin = pulsePin;
             this->directionPin = directionPin;
@@ -107,21 +92,6 @@ namespace Hardware
             stepper.setCurrentPosition(0);
             position = 0;
         }
-
-        Stepper &operator=(const Stepper &other)
-        {
-            this->pulsePin = other.pulsePin;
-            this->directionPin = other.directionPin;
-            this->acceleration = other.acceleration;
-            this->speed = other.speed;
-            this->maxSpeed = other.maxSpeed;
-            this->stepsPerRevolution = other.stepsPerRevolution;
-            this->wheelDiameter = other.wheelDiameter;
-            this->position = other.position;
-            this->telemetry = other.telemetry;
-
-            return *this;
-        }
     };
 
     class LimitSwitch
@@ -130,15 +100,7 @@ namespace Hardware
         bool telemetry;
 
     public:
-        LimitSwitch() = default;
-
-        LimitSwitch(int pin)
-        {
-            this->pin = pin;
-            pinMode(pin, INPUT);
-        }
-
-        LimitSwitch(int pin, bool telemetry)
+        void init(int pin, bool telemetry)
         {
             this->pin = pin;
             pinMode(pin, INPUT);
@@ -159,14 +121,6 @@ namespace Hardware
             }
 
             return pressed;
-        }
-
-        LimitSwitch &operator=(const LimitSwitch &other)
-        {
-            this->pin = other.pin;
-            this->telemetry = other.telemetry;
-
-            return *this;
         }
     };
 }

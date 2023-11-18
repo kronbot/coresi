@@ -24,7 +24,7 @@ namespace Control
             namespace Servo
             {
                 const int SERVO_1_PIN = 2;
-                const int SERVO_2_PIN = 0;
+                const int SERVO_2_PIN = 12;
                 const int SERVO_3_PIN = 18;
                 const int SERVO_4_PIN = 19;
             }
@@ -50,53 +50,68 @@ namespace Control
         Drive::ServoDriver servosDriver;
 
     public:
-        Controller() = default;
-
-        Controller(bool telemetry)
+        void init(bool telemetry)
         {
-            actuatorsDriver = Drive::MotorDriver(
+            actuatorsDriver.init(
                 Config::Pins::Actuator::MOTOR_1_PIN1, Config::Pins::Actuator::MOTOR_1_PIN2, Config::Pins::Actuator::MOTOR_1_ENABLE,
                 Config::Pins::Actuator::MOTOR_2_PIN1, Config::Pins::Actuator::MOTOR_2_PIN2, Config::Pins::Actuator::MOTOR_2_ENABLE,
                 telemetry);
 
-            servosDriver = Drive::ServoDriver(
+            servosDriver.init(
                 Config::Pins::Servo::SERVO_1_PIN,
                 Config::Pins::Servo::SERVO_2_PIN,
                 Config::Pins::Servo::SERVO_3_PIN,
                 Config::Pins::Servo::SERVO_4_PIN, Config::Pins::UltraSonic::ULTRASONIC_TRIG, Config::Pins::UltraSonic::ULTRASONIC_ECHO, Config::Pins::LedStrip::LED_RED_PIN, Config::Pins::LedStrip::LED_GREEN_PIN, Config::Pins::LedStrip::LED_BLUE_PIN, telemetry);
         }
 
-        void run(String system, String action)
+        bool run(String system, String action)
         {
             if (system == "ACTUATOR")
             {
-                if (action == "OPEN")
-                    actuatorsDriver.open();
-                else if (action == "CLOSE")
-                    actuatorsDriver.close();
-                else if (action == "STOP")
-                    actuatorsDriver.forceStop();
+                if (actuatorsDriver.isFree())
+                {
+                    if (action == "OPEN")
+                        actuatorsDriver.open();
+                    else if (action == "CLOSE")
+                        actuatorsDriver.close();
+                    else if (action == "FULL")
+                        actuatorsDriver.full();
+                    else if (action == "STOP")
+                        actuatorsDriver.forceStop();
+
+                    return true;
+                }
+                else
+                    return false;
             }
             else if (system == "SERVO")
             {
-                if (action == "OPEN FIRST")
+                if (servosDriver.isFree())
                 {
-                    servosDriver.open();
-                    servosDriver.setLedPosition("FIRST");
+                    if (action == "OPEN FIRST")
+                    {
+                        servosDriver.open();
+                        servosDriver.setLedPosition("FIRST");
+                    }
+                    else if (action == "OPEN SECOND")
+                    {
+                        servosDriver.open();
+                        servosDriver.setLedPosition("SECOND");
+                    }
+                    else if (action == "OPEN THIRD")
+                    {
+                        servosDriver.open();
+                        servosDriver.setLedPosition("THIRD");
+                    }
+                    else if (action == "CLOSE")
+                        servosDriver.close();
+
+                    return true;
                 }
-                else if (action == "OPEN SECOND")
-                {
-                    servosDriver.open();
-                    servosDriver.setLedPosition("SECOND");
-                }
-                else if (action == "OPEN THIRD")
-                {
-                    servosDriver.open();
-                    servosDriver.setLedPosition("THIRD");
-                }
-                else if (action == "CLOSE")
-                    servosDriver.close();
+                else
+                    return false;
             }
+            return false;
         }
 
         void stop()
@@ -104,17 +119,18 @@ namespace Control
             actuatorsDriver.forceStop();
         }
 
-        double getDistance()
+        String getSendData()
         {
-            return servosDriver.getDistance();
-        }
+            String temp = actuatorsDriver.getSendData();
 
-        Controller &operator=(const Controller &other)
-        {
-            actuatorsDriver = other.actuatorsDriver;
-            servosDriver = other.servosDriver;
+            if (temp != "")
+                return "ACTUATOR " + temp;
 
-            return *this;
+            temp = servosDriver.getSendData();
+            if (temp != "")
+                return "SERVO " + temp;
+
+            return "";
         }
     };
 }

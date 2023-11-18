@@ -5,12 +5,6 @@
 
 namespace COM
 {
-    String doubleToString(double value)
-    {
-        String str = String(value);
-        return str.substring(0, str.indexOf('.') + 3);
-    }
-
     class UART
     {
         HardwareSerial &serial;
@@ -29,8 +23,8 @@ namespace COM
                 String buffer;
                 while (serial.available())
                     buffer += (char)serial.read();
-                data.first = buffer.substring(0, buffer.indexOf(','));
-                data.second = buffer.substring(buffer.indexOf(',') + 1);
+                data.first = buffer.substring(0, buffer.indexOf(' '));
+                data.second = buffer.substring(buffer.indexOf(' ') + 1);
                 readyToRecieve = true;
             }
         }
@@ -51,6 +45,7 @@ namespace COM
 
         void send(String str)
         {
+            str = "SERVOESP: " + str;
             serial.write(str.c_str());
         }
     };

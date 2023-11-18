@@ -17,49 +17,66 @@ namespace Drive
         std::thread stepper2Thread;
         std::thread limitSwitchThread;
 
+        enum class State
+        {
+            BUSY,
+            ZERO
+        };
+
+        State state;
         bool reseted = false;
         bool singleStepper = false;
 
+        String data;
+
         void stepper1Run()
         {
-            // esp_task_wdt_init(60, false);
+            esp_task_wdt_init(120, false);
             while (true)
             {
                 stepper1.run();
+                if (data == "")
+                    data = "FINISHED";
+                else if (data == "FINISHED")
+                    data = "FINISHED " + data;
+                state = State::ZERO;
                 delay(500);
             }
         }
 
         void stepper2Run()
         {
-            // esp_task_wdt_init(60, false);
+            esp_task_wdt_init(120, false);
             while (true)
             {
                 stepper2.run();
+                if (data == "")
+                    data = "FINISHED";
+                else if (data == "FINISHED")
+                    data = "FINISHED " + data;
+                state = State::ZERO;
                 delay(500);
             }
         }
 
         void limitSwitchRun()
         {
-            // esp_task_wdt_init(60, false);
+            esp_task_wdt_init(120, false);
             while (true)
             {
                 if (limitSwitch.isPressed())
                     reset();
 
-                delay(50);
+                delay(250);
             }
         }
 
     public:
-        Driver() = default;
-
-        Driver(int pulsePin1, int directionPin1, int pulsePin2, int directionPin2, int limitSwitchPin)
+        void initDual(int pulsePin1, int directionPin1, int pulsePin2, int directionPin2, int limitSwitchPin, bool telemetry)
         {
-            this->stepper1 = Hardware::Stepper(pulsePin1, directionPin1);
-            this->stepper2 = Hardware::Stepper(pulsePin2, directionPin2);
-            this->limitSwitch = Hardware::LimitSwitch(limitSwitchPin);
+            stepper1.init(pulsePin1, directionPin1, telemetry);
+            stepper2.init(pulsePin2, directionPin2, telemetry);
+            limitSwitch.init(limitSwitchPin, telemetry);
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
             stepper2Thread = std::thread(&Driver::stepper2Run, this);
@@ -71,44 +88,10 @@ namespace Drive
                 delay(50);
         }
 
-        Driver(int pulsePin1, int directionPin1, int pulsePin2, int directionPin2, int limitSwitchPin, bool telemetry)
+        void initSingle(int pulsePin1, int directionPin1, int limitSwitchPin, bool telemetry)
         {
-            // this->stepper1 = Hardware::Stepper(pulsePin1, directionPin1, telemetry);
-            // this->stepper2 = Hardware::Stepper(pulsePin2, directionPin2, telemetry);
-            // this->limitSwitch = Hardware::LimitSwitch(limitSwitchPin, telemetry);
-
-            // Serial.println("Driver created");
-
-            // stepper1Thread = std::thread(&Driver::stepper1Run, this);
-            // stepper2Thread = std::thread(&Driver::stepper2Run, this);
-            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
-
-            // moveTo(-100000);
-
-            // while (!reseted)
-            //     delay(50);
-        }
-
-        Driver(int pulsePin1, int directionPin1, int limitSwitchPin)
-        {
-            this->stepper1 = Hardware::Stepper(pulsePin1, directionPin1);
-            this->limitSwitch = Hardware::LimitSwitch(limitSwitchPin);
-
-            singleStepper = true;
-
-            stepper1Thread = std::thread(&Driver::stepper1Run, this);
-            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
-
-            moveTo(-100000);
-
-            while (!reseted)
-                delay(50);
-        }
-
-        Driver(int pulsePin1, int directionPin1, int limitSwitchPin, bool telemetry)
-        {
-            this->stepper1 = Hardware::Stepper(pulsePin1, directionPin1, telemetry);
-            this->limitSwitch = Hardware::LimitSwitch(limitSwitchPin, telemetry);
+            stepper1.init(pulsePin1, directionPin1, telemetry);
+            limitSwitch.init(limitSwitchPin, telemetry);
 
             singleStepper = true;
 
@@ -132,6 +115,12 @@ namespace Drive
             stepper1.forceStop();
             if (!singleStepper)
                 stepper2.forceStop();
+            state = State::ZERO;
+        }
+
+        bool isFree()
+        {
+            return state == State::ZERO;
         }
 
         void moveTo(int position)
@@ -139,6 +128,8 @@ namespace Drive
             stepper1.moveTo(position);
             if (!singleStepper)
                 stepper2.moveTo(-position);
+
+            state = State::BUSY;
         }
 
         void reset()
@@ -147,15 +138,17 @@ namespace Drive
             if (!singleStepper)
                 stepper2.reset();
             reseted = true;
+
+            state = State::ZERO;
+
+            data = "RESETED";
         }
 
-        Driver &operator=(const Driver &other)
+        String getSendData()
         {
-            this->stepper1 = other.stepper1;
-            this->stepper2 = other.stepper2;
-            this->limitSwitch = other.limitSwitch;
-
-            return *this;
+            String temp = data;
+            data = "";
+            return temp;
         }
     };
 }

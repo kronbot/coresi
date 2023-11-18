@@ -14,7 +14,7 @@ namespace COM
 
     public:
         UART(HardwareSerial &serial) : serial(serial) {}
-        
+
         void update()
         {
             String buffer;
@@ -45,6 +45,7 @@ namespace COM
 
         void send(String str)
         {
+            str = "STEPPERESP: " + str;
             serial.write(str.c_str());
         }
     };

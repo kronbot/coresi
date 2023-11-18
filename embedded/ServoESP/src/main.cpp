@@ -5,34 +5,47 @@
 HardwareSerial uartSerial(0);
 
 Control::Controller controller;
-// COM::UART uart(uartSerial);
+COM::UART uart(uartSerial);
+
+bool telemetry = false;
 
 void setup()
 {
-  Serial.begin(115200);
-  uartSerial.begin(115200, SERIAL_8N1, 3, 1);
+    if (telemetry)
+        Serial.begin(115200);
 
-  controller = Control::Controller(true);
+    uartSerial.begin(115200, SERIAL_8N1, 3, 1);
 
-  Serial.println("Init");
+    controller.init(telemetry);
 
-  delay(2000);
+    uart.send("START");
+
+    delay(20000);
+
+    String data = controller.getSendData();
+    uart.send("INIT");
+
+    if (telemetry)
+        Serial.println("Init");
 }
 
 void loop()
 {
-  // if (uart.isReadyToReceive())
-  // {
-  //   std::pair<String, String> data = uart.recieve();
-  //   controller.run(data.first, data.second);
+    if (uart.isReadyToReceive())
+    {
+        std::pair<String, String> data = uart.recieve();
+        bool response = controller.run(data.first, data.second);
 
-  //   uart.send("RECIEVED");
-  //   uart.send("DISTANCE " + COM::doubleToString(controller.getDistance()));
-  // }
-  // uart.update();
-  // delay(100);
-  controller.run("ACTUATOR", "OPEN");
-  delay(20000);
-  controller.run("ACTUATOR", "CLOSE");
-  delay(20000);
+        if (response)
+            uart.send("RECIEVED");
+        else
+            uart.send("BUSY");
+    }
+
+    String sendData = controller.getSendData();
+    if (sendData != "")
+        uart.send(sendData);
+
+    uart.update();
+    delay(500);
 }

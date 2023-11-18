@@ -53,73 +53,79 @@ namespace Control
         Drive::Driver actuatorsDriver, boxDriver, doorDriver;
 
     public:
-        Controller()
+        void init(bool telemetry)
         {
-            actuatorsDriver = Drive::Driver(
-                Config::Pins::Stepper::ACTUATOR_1_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_1_DIRECTION_PIN,
-                Config::Pins::Stepper::ACTUATOR_2_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_2_DIRECTION_PIN,
-                Config::Pins::LimitSwitch::ActuatorPin);
-
-            boxDriver = Drive::Driver(
-                Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
-                Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
-                Config::Pins::LimitSwitch::BoxPin);
-
-            doorDriver = Drive::Driver(
-                Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
-                Config::Pins::LimitSwitch::DoorPin);
-
             pinMode(Config::Pins::Stepper::ENABLE_PIN, OUTPUT);
-        }
 
-        Controller(bool telemetry)
-        {
-            actuatorsDriver = Drive::Driver(
+            actuatorsDriver.initDual(
                 Config::Pins::Stepper::ACTUATOR_1_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_1_DIRECTION_PIN,
                 Config::Pins::Stepper::ACTUATOR_2_PULSE_PIN, Config::Pins::Stepper::ACTUATOR_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::ActuatorPin, telemetry);
 
-            // boxDriver = Drive::Driver(
-            //     Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
-            //     Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
-            //     Config::Pins::LimitSwitch::BoxPin, telemetry);
+            boxDriver.initDual(
+                Config::Pins::Stepper::BOX_1_PULSE_PIN, Config::Pins::Stepper::BOX_1_DIRECTION_PIN,
+                Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
+                Config::Pins::LimitSwitch::BoxPin, telemetry);
 
-            // doorDriver = Drive::Driver(
-            //     Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
-            //     Config::Pins::LimitSwitch::DoorPin, telemetry);
-
-            pinMode(Config::Pins::Stepper::ENABLE_PIN, OUTPUT);
+            doorDriver.initSingle(
+                Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
+                Config::Pins::LimitSwitch::DoorPin, telemetry);
         }
 
-        void runToPosition(String system, String position)
+        bool run(String system, String position)
         {
             if (system == "ACTUATOR")
             {
-                if (position == "FIRST")
-                    actuatorsDriver.moveTo(Config::Coordinates::FirstBoxPositionSteps);
-                else if (position == "SECOND")
-                    actuatorsDriver.moveTo(Config::Coordinates::SecondBoxPositionSteps);
-                else if (position == "THIRD")
-                    actuatorsDriver.moveTo(Config::Coordinates::ThirdBoxPositionSteps);
-                else if (position == "REST")
-                    actuatorsDriver.moveTo(Config::Coordinates::RestPositionSteps);
+                if (actuatorsDriver.isFree())
+                {
+                    if (position == "FIRST")
+                        actuatorsDriver.moveTo(Config::Coordinates::FirstBoxPositionSteps);
+                    else if (position == "SECOND")
+                        actuatorsDriver.moveTo(Config::Coordinates::SecondBoxPositionSteps);
+                    else if (position == "THIRD")
+                        actuatorsDriver.moveTo(Config::Coordinates::ThirdBoxPositionSteps);
+                    else if (position == "REST")
+                        actuatorsDriver.moveTo(Config::Coordinates::RestPositionSteps);
+
+                    return true;
+                }
+                else
+                    return false;
             }
             else if (system == "BOX")
             {
-                if (position == "FIRST")
-                    boxDriver.moveTo(Config::Coordinates::FirstBoxPositionSteps);
-                else if (position == "SECOND")
-                    boxDriver.moveTo(Config::Coordinates::SecondBoxPositionSteps);
-                else if (position == "THIRD")
-                    boxDriver.moveTo(Config::Coordinates::ThirdBoxPositionSteps);
-                else if (position == "REST")
-                    boxDriver.moveTo(Config::Coordinates::RestPositionSteps);
+                if (boxDriver.isFree())
+                {
+                    if (position == "FIRST")
+                        boxDriver.moveTo(Config::Coordinates::FirstBoxPositionSteps);
+                    else if (position == "SECOND")
+                        boxDriver.moveTo(Config::Coordinates::SecondBoxPositionSteps);
+                    else if (position == "THIRD")
+                        boxDriver.moveTo(Config::Coordinates::ThirdBoxPositionSteps);
+                    else if (position == "REST")
+                        boxDriver.moveTo(Config::Coordinates::RestPositionSteps);
+
+                    return true;
+                }
+                else
+                    return false;
             }
             else if (system == "DOOR")
-                if (position == "OPEN")
-                    doorDriver.moveTo(Config::Coordinates::DoorOpenPositionSteps);
-                else if (position == "CLOSE")
-                    doorDriver.moveTo(Config::Coordinates::RestPositionSteps);
+            {
+                if (doorDriver.isFree())
+                {
+                    if (position == "OPEN")
+                        doorDriver.moveTo(Config::Coordinates::DoorOpenPositionSteps);
+                    else if (position == "CLOSE")
+                        doorDriver.moveTo(Config::Coordinates::RestPositionSteps);
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+            return false;
         }
 
         void stop()
@@ -130,13 +136,22 @@ namespace Control
             doorDriver.forceStop();
         }
 
-        Controller &operator=(const Controller &other)
+        String getSendData()
         {
-            actuatorsDriver = other.actuatorsDriver;
-            boxDriver = other.boxDriver;
-            doorDriver = other.doorDriver;
+            String temp = actuatorsDriver.getSendData();
 
-            return *this;
+            if (temp != "")
+                return "ACTUATOR " + temp;
+
+            temp = boxDriver.getSendData();
+            if (temp != "")
+                return "SERVO " + temp;
+
+            temp = doorDriver.getSendData();
+            if (temp != "")
+                return "DOOR " + temp;
+
+            return "";
         }
     };
 }
