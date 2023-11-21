@@ -73,7 +73,7 @@ namespace Drive
                 if (limitSwitch.isPressed())
                     reset();
 
-                delay(250);
+                delay(100);
             }
         }
 
@@ -86,12 +86,12 @@ namespace Drive
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
             stepper2Thread = std::thread(&Driver::stepper2Run, this);
-            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
+            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            // moveTo(-100000);
+            moveTo(-100000);
 
-            // while (!reseted)
-            //     delay(50);
+            while (!reseted)
+                delay(50);
         }
 
         void initSingle(int pulsePin1, int directionPin1, int limitSwitchPin, bool telemetry)
@@ -102,12 +102,12 @@ namespace Drive
             singleStepper = true;
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
-            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
+            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            // moveTo(-100000);
+            moveTo(-100000);
 
-            // while (!reseted)
-            //     delay(50);
+            while (!reseted)
+                delay(50);
         }
 
         ~Driver()

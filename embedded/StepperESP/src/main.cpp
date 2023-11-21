@@ -20,17 +20,13 @@ void setup()
 
     controller.init(telemetry);
 
-    // delay(20000);
+    delay(5000);
 
     String data = controller.getSendData();
     uart.send("INIT");
 
     if (telemetry)
         Serial.println("Init");
-
-    controller.run("ACTUATOR", "FIRST");
-
-    delay(50000);
 }
 
 void loop()

@@ -67,9 +67,9 @@ namespace Control
                 Config::Pins::Stepper::BOX_2_PULSE_PIN, Config::Pins::Stepper::BOX_2_DIRECTION_PIN,
                 Config::Pins::LimitSwitch::BoxPin, telemetry);
 
-            doorDriver.initSingle(
-                Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
-                Config::Pins::LimitSwitch::DoorPin, telemetry);
+            // doorDriver.initSingle(
+            //     Config::Pins::Stepper::DOOR_PULSE_PIN, Config::Pins::Stepper::DOOR_DIRECTION_PIN,
+            //     Config::Pins::LimitSwitch::DoorPin, telemetry);
         }
 
         bool run(String system, String position)

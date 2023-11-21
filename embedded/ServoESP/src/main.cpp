@@ -20,7 +20,7 @@ void setup()
 
     uart.send("START");
 
-    delay(20000);
+    delay(30000);
 
     String data = controller.getSendData();
     uart.send("INIT");
