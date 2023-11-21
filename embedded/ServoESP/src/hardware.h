@@ -120,13 +120,13 @@ namespace Hardware
         {
             if (direction)
             {
-                digitalWrite(pin1, HIGH);
-                digitalWrite(pin2, LOW);
+                digitalWrite(pin1, LOW);
+                digitalWrite(pin2, HIGH);
             }
             else
             {
-                digitalWrite(pin1, LOW);
-                digitalWrite(pin2, HIGH);
+                digitalWrite(pin1, HIGH);
+                digitalWrite(pin2, LOW);
             }
         }
     };

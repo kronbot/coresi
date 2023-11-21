@@ -7,7 +7,7 @@ HardwareSerial uartSerial(0);
 Control::Controller controller;
 COM::UART uart(uartSerial);
 
-bool telemetry = true;
+bool telemetry = false;
 
 void setup()
 {
@@ -16,17 +16,21 @@ void setup()
 
     uartSerial.begin(115200, SERIAL_8N1, 3, 1);
 
-    controller.init(telemetry);
-
     uart.send("START");
 
-    delay(20000);
+    controller.init(telemetry);
+
+    // delay(20000);
 
     String data = controller.getSendData();
     uart.send("INIT");
 
     if (telemetry)
         Serial.println("Init");
+
+    controller.run("ACTUATOR", "FIRST");
+
+    delay(50000);
 }
 
 void loop()

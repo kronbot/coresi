@@ -35,11 +35,14 @@ namespace Drive
             while (true)
             {
                 stepper1.run();
-                if (data == "")
-                    data = "FINISHED";
-                else if (data == "FINISHED")
-                    data = "FINISHED " + data;
-                state = State::ZERO;
+                if (state != State::ZERO)
+                {
+                    if (data == "")
+                        data = "FINISHED";
+                    else if (data == "FINISHED")
+                        data = "FINISHED " + data;
+                    state = State::ZERO;
+                }
                 delay(500);
             }
         }
@@ -50,11 +53,14 @@ namespace Drive
             while (true)
             {
                 stepper2.run();
-                if (data == "")
-                    data = "FINISHED";
-                else if (data == "FINISHED")
-                    data = "FINISHED " + data;
-                state = State::ZERO;
+                if (state != State::ZERO)
+                {
+                    if (data == "")
+                        data = "FINISHED";
+                    else if (data == "FINISHED")
+                        data = "FINISHED " + data;
+                    state = State::ZERO;
+                }
                 delay(500);
             }
         }
@@ -80,12 +86,12 @@ namespace Drive
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
             stepper2Thread = std::thread(&Driver::stepper2Run, this);
-            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
+            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            moveTo(-100000);
+            // moveTo(-100000);
 
-            while (!reseted)
-                delay(50);
+            // while (!reseted)
+            //     delay(50);
         }
 
         void initSingle(int pulsePin1, int directionPin1, int limitSwitchPin, bool telemetry)
@@ -96,12 +102,12 @@ namespace Drive
             singleStepper = true;
 
             stepper1Thread = std::thread(&Driver::stepper1Run, this);
-            limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
+            // limitSwitchThread = std::thread(&Driver::limitSwitchRun, this);
 
-            moveTo(-100000);
+            // moveTo(-100000);
 
-            while (!reseted)
-                delay(50);
+            // while (!reseted)
+            //     delay(50);
         }
 
         ~Driver()
