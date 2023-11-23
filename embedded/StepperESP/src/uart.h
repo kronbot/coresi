@@ -23,8 +23,8 @@ namespace COM
                 String buffer;
                 while (serial.available())
                     buffer += (char)serial.read();
-                data.first = buffer.substring(0, buffer.indexOf(','));
-                data.second = buffer.substring(buffer.indexOf(',') + 1);
+                data.first = buffer.substring(0, buffer.indexOf(' '));
+                data.second = buffer.substring(buffer.indexOf(' ') + 1);
                 readyToRecieve = true;
             }
         }

@@ -39,8 +39,6 @@ namespace Drive
                 {
                     if (data == "")
                         data = "FINISHED";
-                    else if (data == "FINISHED")
-                        data = "FINISHED " + data;
                     state = State::ZERO;
                 }
                 delay(500);
@@ -57,8 +55,6 @@ namespace Drive
                 {
                     if (data == "")
                         data = "FINISHED";
-                    else if (data == "FINISHED")
-                        data = "FINISHED " + data;
                     state = State::ZERO;
                 }
                 delay(500);

@@ -20,6 +20,8 @@ void setup()
 
     controller.init(telemetry);
 
+    uart.send("RESETED");
+
     delay(5000);
 
     String data = controller.getSendData();

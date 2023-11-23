@@ -145,7 +145,7 @@ namespace Control
 
             temp = boxDriver.getSendData();
             if (temp != "")
-                return "SERVO " + temp;
+                return "BOX " + temp;
 
             temp = doorDriver.getSendData();
             if (temp != "")
